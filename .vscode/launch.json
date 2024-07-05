@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/hebod/OneDrive/Escritorio/Gamesale",
-      "program": "c:/Users/hebod/OneDrive/Escritorio/Gamesale/build/Debug/outDebug",
+      "cwd": "c:/Users/rodzz/Desktop/RapiJuegos/RapiJuegos",
+      "program": "c:/Users/rodzz/Desktop/RapiJuegos/RapiJuegos/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
