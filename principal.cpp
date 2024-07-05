@@ -17,7 +17,7 @@ int main()
 
     cargarVentas(v);
 
-    cout << "Digite el código de la venta:" << endl;
+    cout << "Digite código de venta:" << endl;
     cin >> codigo;
 
     eliminarVenta(v, codigo);
