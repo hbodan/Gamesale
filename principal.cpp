@@ -3,22 +3,37 @@
 #include <windows.h>
 using namespace std;
 
+void guardarUsuarios(Usuario u[10]);
+void agregarUsuarios(Usuario u[10], int i);
+void registrarUsuario(Usuario u[10]);
+void mostrarMenuPrincipal(Juego* p, Ventas* v, Usuario* u);
+void cargarUsuarios(Usuario* u);
+bool iniciarSesion(Usuario* j);
 void cargarVentas(Ventas v[5]);
 Ventas *buscarVentas(Ventas v[5], const char *codigo);
 void imprimirVentas(Ventas v);
 void eliminarVenta(Ventas v[5], const char *codigo);
+void mostrarVentas(Ventas v);
 
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
 
-    Ventas v[5];
-    char codigo[10];
+    Juego j[100];
+    Ventas v[300];
+    Usuario u[10];
 
-    cargarVentas(v);
+    cargarUsuarios(u);
 
-    cout << "Por favor, digite código de venta:" << endl;
-    cin >> codigo;
+    bool bandera = true;
 
-    eliminarVenta(v, codigo);
+    do{
+        if (iniciarSesion(u)) {
+            //Si existe el usuario, procedemos a menuPrincipal
+            mostrarMenuPrincipal(j,v,u);
+        } else {
+            //Si no existe, se le preguntará nuevamente (Solo el usuario existente, puede crear nuevos usuarios)
+            cout << "Inicio de sesión fallido." <<endl;
+        }
+    }while(bandera);
 }

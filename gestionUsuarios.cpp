@@ -1,83 +1,111 @@
 #include "datos.h"
 #include <iostream>
 #include <cstring>
+#include <windows.h>
 using namespace std;
 
-void agregarUsuarios(Usuario u[5], int i)
+void agregarUsuarios(Usuario* u, int i)
 {
-    cout << "Ingrese el código del usuario: " << endl;
-    cin >> u[i].codigo;
-    cin.ignore();
+    cout << "Ingrese nuevamente el código del usuario: " << endl;
+    cin.getline(u[i].codigo, 5);
     cout << "Ingrese el nombre del empleado: " << endl;
-    cin.getline(u[i].nombre, sizeof(u[i].nombre));
+    cin.getline(u[i].nombre, 20);
     cout << "Ingrese un nombre de usuario: " << endl;
-    cin >> u[i].usuario;
+    cin.getline(u[i].usuario,15);
     cout << "Ingrese una contraseña: " << endl;
-    cin >> u[i].contrasenia;
-    cout << "Ingrese la cantidad juegos vendida: " << endl;
-    cin >> u[i].juegosVendidos;
+    cin.getline(u[i].contrasenia,20);
+    u[i].estado = 1;
 }
 
-void guardarUsuarios(Usuario u[5])
+void guardarUsuarios(Usuario* u)
 {
     char opcion;
-    cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: " << endl;
-    cin >> opcion;
+    cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
+    cin>>opcion;
+    cout<<opcion<<endl;
 
-    if (opcion == 'S' || opcion == 's')
+    if (opcion == 'S' ||opcion == 's' )
     {
-        FILE *archi;
-        archi = fopen("usuarios.dat", "a");
-
-        for (int i = 0; i < 5; i++)
+        FILE *temp, *archi;
+        temp = fopen("usuariosTemporal.dat", "w");
+        for (int i = 0; i < 10; i++)
         {
-            fprintf(archi, "%s\n", u[i].codigo);
-            fprintf(archi, "%s\n", u[i].nombre);
-            fprintf(archi, "%s\n", u[i].usuario);
-            fprintf(archi, "%s\n", u[i].contrasenia);
-            fprintf(archi, "%d\n", u[i].juegosVendidos);
+            fprintf(temp, "%s\n", u[i].codigo);
+            fprintf(temp, "%s\n", u[i].nombre);
+            fprintf(temp, "%s\n", u[i].usuario);
+            fprintf(temp, "%s\n", u[i].contrasenia);
+            fprintf(temp, "%d\n", u[i].estado);
         }
-        fclose(archi);
+        fclose(temp);
+        printf("Los datos se han guardado exitosamente...\n");
+        if((archi=fopen("usuarios.dat","r"))!=NULL){
+            fclose(archi);
+            remove("usuarios.dat");
+        }    
+        rename("usuariosTemporal.dat","usuarios.dat");
         printf("Los datos se han guardado exitosamente...\n");
     }
     system("pause");
 }
 
-void cargarUsuarios(Usuario u[5])
+
+void cargarUsuarios(Usuario* u)
 {
     FILE *archi;
-    archi = fopen("usuarios.dat", "r");
+    archi = fopen("usuarios.dat", "r"); // Abrir en modo lectura
 
     if (archi == NULL)
     {
-        perror("Error al abrir el archivo usuarios.dat");
+        perror("Error al abrir el archivo usuarios.dat. Asignando valores por defecto.");
+        for (int i = 0; i < 10; i++)
+        {
+            u[i].estado = 0; // Marcar como vacío
+        }
         return;
     }
 
-    for (int i = 0; i < 5; i++)
+    int i = 0;
+    while (i < 10 &&
+           fscanf(archi, "%5s\n", u[i].codigo) != EOF &&
+           fgets(u[i].nombre, sizeof(u[i].nombre), archi) != NULL &&
+           fgets(u[i].usuario, sizeof(u[i].usuario), archi) != NULL &&
+           fgets(u[i].contrasenia, sizeof(u[i].contrasenia), archi) != NULL &&
+           fscanf(archi, "%d\n", &u[i].estado) != EOF)
     {
-        fscanf(archi, "%s\n", u[i].codigo);
-        fgets(u[i].nombre, 20, archi);
-        fscanf(archi, "%s\n", u[i].usuario);
-        fscanf(archi, "%s\n", u[i].contrasenia);
-        fscanf(archi, "%d\n", &u[i].juegosVendidos);
+        u[i].codigo[strcspn(u[i].codigo, "\n")] = '\0';
+        u[i].nombre[strcspn(u[i].nombre, "\n")] = '\0';
+        u[i].usuario[strcspn(u[i].usuario, "\n")] = '\0';
+        u[i].contrasenia[strcspn(u[i].contrasenia, "\n")] = '\0';
+        i++;
     }
+
+    // Marcar los espacios restantes como vacíos
+    for (; i < 10; i++)
+    {
+        u[i].estado = 0; // Marcar como vacío
+    }
+
     fclose(archi);
 }
 
-void mostrarUsuarios(Usuario u)
+void mostrarUsuarios(Usuario* u)
 {
-    printf("Código del empleado: %s\n", u.codigo);
-    printf("Nombre: %s", u.nombre);
-    printf("Usuario: %s", u.usuario);
-    printf("Contraseña: %s\n", u.contrasenia);
-    printf("Cantidad de juegos vendidos: %d\n\n", u.juegosVendidos);
+    for(int i =0; i<10; i++){
+        if(u[i].estado == 1 || u[i].estado == 2){
+            printf("----------------------------------------------\n");
+            printf("Código del empleado: %s\n", u[i].codigo);
+            printf("Nombre: %s\n", u[i].nombre);
+            printf("Usuario: %s\n", u[i].usuario);
+            printf("Contraseña: %s\n", u[i].contrasenia);
+        }
+    }
+    printf("----------------------------------------------\n");
 }
 
-Usuario *buscarUsuario(Usuario u[5], const char *codigo)
+Usuario *buscarUsuario(Usuario u[10], const char *codigo)
 {
     Usuario *usr = NULL;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
         if ((u[i].estado == 1 || u[i].estado == 2) && strcmp(u[i].codigo, codigo) == 0)
         {
@@ -88,8 +116,14 @@ Usuario *buscarUsuario(Usuario u[5], const char *codigo)
     return usr;
 }
 
-void eliminarUsuario(Usuario u[5], const char *codigo)
+void eliminarUsuario(Usuario* u)
 {
+
+    char codigo[5] = "";
+    cout<<"Dame el código de usuario"<<endl;
+    cin.ignore();
+    cin.getline(codigo, 5);
+
     Usuario *usuarioEliminar = buscarUsuario(u, codigo);
 
     if (usuarioEliminar != NULL)
@@ -103,32 +137,40 @@ void eliminarUsuario(Usuario u[5], const char *codigo)
     }
 }
 
-void actualizarUsuario(Usuario u[5], int i)
+void actualizarUsuario(Usuario* u, int i)
 {
-    cout << "Ingrese el nuevo código de usuario: " << endl;
-    cin >> u[i].codigo;
-    cin.ignore();
     cout << "Ingrese el nuevo nombre del empleado: " << endl;
-    cin.getline(u[i].nombre, sizeof(u[i].nombre));
+    cin.getline(u[i].nombre, 20);
     cout << "Ingrese el nuevo nombre de usuario: " << endl;
-    cin >> u[i].usuario;
+    cin.getline(u[i].usuario, 15);
     cout << "Ingrese la nueva contraseña: " << endl;
-    cin >> u[i].contrasenia;
-    cout << "Ingrese la nueva cantidad juegos vendida: " << endl;
-    cin >> u[i].juegosVendidos;
+    cin.getline(u[i].contrasenia, 20);
     cout << "Los datos han sido editados exitosamente." << endl;
     u[i].estado = 2;
 }
 
-void modificarUsuario(Usuario u[5], const char *codigo)
+void modificarUsuario(Usuario* u)
 {
+    char codigo[5] = "";
+    cout<<"Dame el código de usuario"<<endl;
+    cin.ignore();
+    cin.getline(codigo, 5);
+
     Usuario *usuarioModificar = buscarUsuario(u, codigo);
 
     if (usuarioModificar != NULL)
     {
         cout << "El usuario está registrado en el sistema. Proceda a editar los datos: " << endl;
-        actualizarUsuario(u, usuarioModificar - u);
 
+        for(int i = 0; i<10; i++){
+            if(u[i].estado!=0){
+                if(strcmp(u[i].codigo, codigo)==0){
+                    actualizarUsuario(u,i);
+                    break;
+                 }
+            }
+            
+        }
         cout << "Usuario editado exitosamente." << endl;
     }
     else
@@ -137,8 +179,13 @@ void modificarUsuario(Usuario u[5], const char *codigo)
     }
 }
 
-void registrarUsuario(Usuario u[5], const char *codigo)
+void registrarUsuario(Usuario* u)
 {
+    char codigo[6]; 
+    cout << "Ingrese el código de usuario a registrar: ";
+    cin.ignore();
+    cin.getline(codigo, sizeof(codigo));
+
     Usuario *usuarioRegistrar = buscarUsuario(u, codigo);
 
     if (usuarioRegistrar != NULL)
@@ -147,15 +194,21 @@ void registrarUsuario(Usuario u[5], const char *codigo)
     }
     else
     {
-        for (int i = 0; i < 1; i++)
+        bool espacioDisponible = false;
+        for (int i = 0; i < 10; i++)
         {
             if (u[i].estado == 0)
             {
                 agregarUsuarios(u, i);
-                cout << "Usuario agregado existosamente." << endl;
-                return;
+                cout << "Usuario registrado exitosamente." << endl;
+                espacioDisponible = true;
+                break;
             }
         }
-        cout << "No hay espacio para agregar más usuarios." << endl;
+
+        if (!espacioDisponible)
+        {
+            cout << "No hay espacio para agregar más usuarios." << endl;
+        }
     }
 }

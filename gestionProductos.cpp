@@ -3,7 +3,7 @@
 #include <windows.h>
 using namespace std;
 
-void agregarProductos(Juego j[5], int i)
+void agregarProductos(Juego j[100], int i)
 {
     cout << "Ingrese el código del juego: " << endl;
     cin >> j[i].codigo;
@@ -30,7 +30,7 @@ void agregarProductos(Juego j[5], int i)
     cin.ignore();
 }
 
-void guardarProductos(Juego j[5])
+void guardarProductos(Juego j[100])
 {
     char opcion;
     cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: " << endl;
@@ -47,7 +47,7 @@ void guardarProductos(Juego j[5])
             return;
         }
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 100; i++)
         {
             fprintf(archi, "%s\n", j[i].codigo);
             fprintf(archi, "%s\n", j[i].nombre);
@@ -63,12 +63,12 @@ void guardarProductos(Juego j[5])
     system("pause");
 }
 
-void cargarProductos(Juego j[5])
+void cargarProductos(Juego j[100])
 {
     FILE *archi;
     archi = fopen("productos.dat", "r");
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 100; i++)
     {
         fscanf(archi, "%s\n", j[i].codigo);
         cin.ignore();
@@ -94,7 +94,7 @@ void mostrarProductos(Juego j)
     printf("Stock del juego: %.2lf\n", j.precio);
 }
 
-Juego *buscarProducto(Juego j[5], const char *codigo)
+Juego *buscarProducto(Juego j[100], const char *codigo)
 {
     Juego *pdo = NULL;
     for (int i = 0; i < 5; i++)
@@ -108,7 +108,7 @@ Juego *buscarProducto(Juego j[5], const char *codigo)
     return pdo;
 }
 
-void eliminarProducto(Juego j[5], const char *codigo)
+void eliminarProducto(Juego j[100], const char *codigo)
 {
     Juego *productoEliminar = buscarProducto(j, codigo);
 
@@ -123,7 +123,7 @@ void eliminarProducto(Juego j[5], const char *codigo)
     }
 }
 
-void actualizarProducto(Juego j[5], int i)
+void actualizarProducto(Juego j[100], int i)
 {
     cout << "Ingrese el código del juego: " << endl;
     cin >> j[i].codigo;
@@ -145,7 +145,7 @@ void actualizarProducto(Juego j[5], int i)
     j[i].estado = 2;
 }
 
-void modificarProducto(Juego j[5], const char *codigo)
+void modificarProducto(Juego j[100], const char *codigo)
 {
     Juego *productoModificar = buscarProducto(j, codigo);
 
@@ -162,7 +162,7 @@ void modificarProducto(Juego j[5], const char *codigo)
     }
 }
 
-void registrarProducto(Juego j[5], const char *codigo)
+void registrarProducto(Juego j[100], const char *codigo)
 {
     Juego *productoRegistrar = buscarProducto(j, codigo);
 

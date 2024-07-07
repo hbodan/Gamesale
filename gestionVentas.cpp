@@ -26,12 +26,6 @@ void agregarVentas(Ventas v[5], int i)
     cin.ignore();
     cout << "Ingrese el nombre del empleado: " << endl;
     cin.getline(v[i].empleado.nombre, sizeof(v[i].empleado.nombre));
-    cout << "Ingrese el porcentaje de descuento: " << endl;
-    cin >> v[i].porcentajeDescuento;
-    cout << "Ingrese el total sin aplicar descuento: " << endl;
-    cin >> v[i].totalSinDescuento;
-    cout << "Ingrese el total con el descuento aplicado: " << endl;
-    cin >> v[i].totalConDescuento;
 }
 
 void guardarVentas(Ventas v[5])
@@ -57,9 +51,6 @@ void guardarVentas(Ventas v[5])
             fprintf(archi, "%d\n", v[i].fechaVenta.mes);
             fprintf(archi, "%d\n", v[i].fechaVenta.anio);
             fprintf(archi, "%s\n", v[i].empleado.nombre);
-            fprintf(archi, "%lf\n", v[i].porcentajeDescuento);
-            fprintf(archi, "%lf\n", v[i].totalSinDescuento);
-            fprintf(archi, "%lf\n", v[i].totalConDescuento);
         }
         fclose(archi);
         printf("Los datos se han guardado exitosamente...\n");
@@ -90,9 +81,6 @@ void cargarVentas(Ventas v[5])
         fscanf(archi, "%d\n", &v[i].fechaVenta.mes);
         fscanf(archi, "%d\n", &v[i].fechaVenta.anio);
         fgets(v[i].empleado.nombre, 20, archi);
-        fscanf(archi, "%lf\n", &v[i].porcentajeDescuento);
-        fscanf(archi, "%lf\n", &v[i].totalSinDescuento);
-        fscanf(archi, "%lf\n", &v[i].totalConDescuento);
     }
     fclose(archi);
 }
@@ -108,9 +96,6 @@ void mostrarVentas(Ventas v)
     {
         printf("  %d: %s\n", j + 1, v.codigosJuegos[j]);
     }
-    printf("Descuento: %.2lf\n", v.porcentajeDescuento);
-    printf("Total sin descuento: %.2lf\n", v.totalSinDescuento);
-    printf("Total con descuento: %.2lf\n\n", v.totalConDescuento);
 }
 
 Ventas *buscarVenta(Ventas v[5], const char *codigo)
@@ -165,12 +150,6 @@ void actualizarVenta(Ventas v[5], int i)
     cin.ignore();
     cout << "Ingrese el nuevo nombre del empleado: " << endl;
     cin.getline(v[i].empleado.nombre, sizeof(v[i].empleado.nombre));
-    cout << "Ingrese el porcentaje de descuento: " << endl;
-    cin >> v[i].porcentajeDescuento;
-    cout << "Ingrese el nuevo total sin aplicar descuento: " << endl;
-    cin >> v[i].totalSinDescuento;
-    cout << "Ingrese el nuevo total con el descuento aplicado: " << endl;
-    cin >> v[i].totalConDescuento;
     v[i].estado = 2;
 }
 

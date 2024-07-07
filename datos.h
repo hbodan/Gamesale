@@ -15,7 +15,6 @@ struct Usuario
     char nombre[20] = "";
     char usuario[15] = "";
     char contrasenia[20] = "";
-    int juegosVendidos = 0;
     int estado = 1; // EOF-Eliminado, 0-Vacío 1-Existente, 2-Modificado, 3-Devuelto
 };
 
@@ -47,9 +46,6 @@ struct Ventas
     int cantidadJuegos;
     Fecha fechaVenta;
     Usuario empleado;
-    double porcentajeDescuento = 0.00;
-    double totalSinDescuento = 0.00;
-    double totalConDescuento = 0.00;
     int estado = 1; // EOF-Eliminado, 1-Existente, 2-Modificado, 3-Devuelto
 };
 
