@@ -3,8 +3,13 @@
 #include <cstring>
 using namespace std;
 
+void probandoRama(){
+    cout << "Probando rama"<< endl;
+}
+
 void agregarVentas(Ventas v[5], int i)
 {
+    cout << "Probando Rama"<< endl;
     cout << "Ingrese el código de la venta: " << endl;
     cin >> v[i].codigo;
     cin.ignore();
