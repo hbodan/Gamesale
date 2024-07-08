@@ -3,193 +3,148 @@
 #include <cstring>
 using namespace std;
 
-void agregarVentas(Ventas* v, int i)
-{
-    cout << "Ingrese el código de la venta: " << endl;
-    cin.getline(v[i].codigo, 10);
+void leerFechaSistema(Fecha &hoy);
 
-    cout << "Ingrese la cantidad de juegos que esta comprando: " << endl;
-    cin >>(v[i].cantidadJuegos);
-    v[i].cantidadJuegos = min(v[i].cantidadJuegos, 15);
-    for (int j = 0; j < v[i].cantidadJuegos; j++)
-    {
-        cout << "Ingrese el código del juego: " << j + 1 << endl;
-        cin >> v[i].codigosJuegos[j];
-        cin.ignore();
-    }
-    cout << "Ingrese el dia de la venta: " << endl;
-    cin >> v[i].fechaVenta.dia;
-    cout << "Ingrese el mes de la venta: " << endl;
-    cin >> v[i].fechaVenta.mes;
-    cout << "Ingrese el año de la venta: " << endl;
-    cin >> v[i].fechaVenta.anio;
-    cin.ignore();
-    cout << "Ingrese el nombre del empleado: " << endl;
-    cin.getline(v[i].empleado.nombre, sizeof(v[i].empleado.nombre));
-
-}
-
-void guardarVentas(Ventas v[5])
-{
-    char opcion;
-    cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: " << endl;
-    cin >> opcion;
-
-    if (opcion == 'S' || opcion == 's')
-    {
-        FILE *archi;
-        archi = fopen("ventas.dat", "a");
-
-        for (int i = 0; i < 5; i++)
-        {
-            fprintf(archi, "%s\n", v[i].codigo);
-            fprintf(archi, "%d\n", v[i].cantidadJuegos);
-            for (int j = 0; j < v[i].cantidadJuegos; j++)
-            {
-                fprintf(archi, "%s\n", v[i].codigosJuegos[j]);
-            }
-            fprintf(archi, "%d\n", v[i].fechaVenta.dia);
-            fprintf(archi, "%d\n", v[i].fechaVenta.mes);
-            fprintf(archi, "%d\n", v[i].fechaVenta.anio);
-            fprintf(archi, "%s\n", v[i].empleado.nombre);
-        }
-        fclose(archi);
-        printf("Los datos se han guardado exitosamente...\n");
-    }
-    system("pause");
-}
-
-void cargarVentas(Ventas v[5])
-{
+void cargarVentas(Ventas* v) {
     FILE *archi;
-    archi = fopen("ventas.dat", "r");
+    archi = fopen("ventas.dat", "r"); // Abrir en modo lectura
 
-    if (archi == NULL)
-    {
-        perror("Error al abrir el archivo ventas.dat");
+    if (archi == NULL) {
+        perror("Error al abrir el archivo ventas.dat. Asignando valores por defecto.");
+        for (int i = 0; i < 100; i++) {
+            v[i].estado = 0; // Marcar como vacío
+        }
         return;
     }
 
-    for (int i = 0; i < 5; i++)
-    {
-        fscanf(archi, "%s\n", v[i].codigo);
-        fscanf(archi, "%d\n", &v[i].cantidadJuegos);
-        for (int j = 0; j < v[i].cantidadJuegos; j++)
-        {
-            fscanf(archi, "%s", v[i].codigosJuegos[j]);
+    int i = 0;
+    while (i < 100 && fscanf(archi, "%9s", v[i].codigo) == 1) {
+        if (fscanf(archi, "%d", &v[i].cantidadJuegos) != 1) break;
+
+        for (int j = 0; j < v[i].cantidadJuegos; j++) {
+            if (fscanf(archi, "%11s", v[i].codigosJuegos[j]) != 1) break;
         }
-        fscanf(archi, "%d\n", &v[i].fechaVenta.dia);
-        fscanf(archi, "%d\n", &v[i].fechaVenta.mes);
-        fscanf(archi, "%d\n", &v[i].fechaVenta.anio);
-        fgets(v[i].empleado.nombre, 20, archi);
+
+        if (fscanf(archi, "%d", &v[i].fechaVenta.dia) != 1) break;
+        if (fscanf(archi, "%d", &v[i].fechaVenta.mes) != 1) break;
+        if (fscanf(archi, "%d", &v[i].fechaVenta.anio) != 1) break;
+
+        fgets(v[i].empleado.nombre, sizeof(v[i].empleado.nombre), archi);
+        v[i].empleado.nombre[strcspn(v[i].empleado.nombre, "\n")] = '\0';
+
+        if (fscanf(archi, "%d", &v[i].estado) != 1) break;
+
+        v[i].codigo[strcspn(v[i].codigo, "\n")] = '\0';
+        i++;
     }
+
+    // Marcar los espacios restantes como vacíos
+    for (; i < 100; i++) {
+        v[i].estado = 0; // Marcar como vacío
+    }
+
     fclose(archi);
 }
 
-void mostrarVentas(Ventas v)
-{
-    printf("Fecha de la venta: %d/%d/%d\n", v.fechaVenta.dia, v.fechaVenta.mes, v.fechaVenta.anio);
-    printf("Código de la venta: %s\n", v.codigo);
-    printf("Nombre del empleado: %s", v.empleado.nombre);
-    printf("Cantidad de juegos comprados: %d\n", v.cantidadJuegos);
-    printf("Códigos de los juegos:\n");
-    for (int j = 0; j < v.cantidadJuegos; j++)
-    {
-        printf("  %d: %s\n", j + 1, v.codigosJuegos[j]);
-    }
-}
+void agregarVentas(Ventas* v, int i) {
+    cout << "Ingrese el código de la venta: ";
+    cin.ignore(); // Para limpiar el buffer
+    cin.getline(v[i].codigo, sizeof(v[i].codigo));
 
-Ventas *buscarVenta(Ventas v[5], const char *codigo)
-{
-    Ventas *vnt = NULL;
-    for (int i = 0; i < 5; i++)
-    {
-        if ((v[i].estado == 1 || v[i].estado == 2) && strcmp(v[i].codigo, codigo) == 0)
-        {
-            vnt = &(v[i]);
-            break;
-        }
-    }
-    return vnt;
-}
-
-void eliminarVenta(Ventas v[5], const char *codigo)
-{
-    Ventas *ventaEliminar = buscarVenta(v, codigo);
-
-    if (ventaEliminar != NULL)
-    {
-        ventaEliminar->estado = 0;
-        cout << "Venta eliminada exitosamente." << endl;
-    }
-    else
-    {
-        cout << "No se encontró la venta con el código especificado." << endl;
-    }
-}
-
-void actualizarVenta(Ventas v[5], int i)
-{
-    cout << "Ingrese el nuevo código de la venta: " << endl;
-    cin >> v[i].codigo;
-    cin.ignore();
-    cout << "¿Cuántos juegos se están comprando? " << endl;
+    cout << "Ingrese la cantidad de juegos que está comprando: ";
     cin >> v[i].cantidadJuegos;
     v[i].cantidadJuegos = min(v[i].cantidadJuegos, 15);
-    for (int j = 0; j < v[i].cantidadJuegos; j++)
-    {
-        cout << "Ingrese el código del juego: " << j + 1 << endl;
-        cin >> v[i].codigosJuegos[j];
-        cin.ignore();
+    cin.ignore(); // Para limpiar el buffer después de la entrada de enteros
+
+    for (int j = 0; j < v[i].cantidadJuegos; j++) {
+        cout << "Ingrese el código del juego " << j + 1 << ": ";
+        cin.getline(v[i].codigosJuegos[j], sizeof(v[i].codigosJuegos[j]));
     }
-    cout << "Ingrese el nuevo dia de la venta: " << endl;
-    cin >> v[i].fechaVenta.dia;
-    cout << "Ingrese el nuevo mes de la venta: " << endl;
-    cin >> v[i].fechaVenta.mes;
-    cout << "Ingrese el nuevo año de la venta: " << endl;
-    cin >> v[i].fechaVenta.anio;
-    cin.ignore();
-    cout << "Ingrese el nuevo nombre del empleado: " << endl;
+
+    // Asignar la fecha del sistema
+    leerFechaSistema(v[i].fechaVenta);
+
+    cout << "Ingrese el nombre del empleado: ";
     cin.getline(v[i].empleado.nombre, sizeof(v[i].empleado.nombre));
-    v[i].estado = 2;
+
+    v[i].estado = 1; // Marcar como existente
 }
 
-void modificarVenta(Ventas v[5], const char *codigo)
-{
-    Ventas *ventaModificar = buscarVenta(v, codigo);
+void guardarVentas(Ventas* v) {
+    char opcion;
+    cout << "¿Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
+    cin >> opcion;
 
-    if (ventaModificar != NULL)
-    {
-        cout << "El usuario está registrado en el sistema. Proceda a editar los datos: " << endl;
-        actualizarVenta(v, ventaModificar - v);
-
-        cout << "Venta editada exitosamente." << endl;
-    }
-    else
-    {
-        cout << "No se encontró la venta con el código especificado." << endl;
-    }
-}
-
-void registrarVenta(Ventas v[5], const char *codigo)
-{
-    Ventas *ventaRegistrar = buscarVenta(v, codigo);
-
-    if (ventaRegistrar != NULL)
-    {
-        cout << "La venta ya está registrada en el sistema." << endl;
-    }
-    else
-    {
-        for (int i = 0; i < 1; i++)
-        {
-            if (v[i].estado == 0)
-            {
-                agregarVentas(v, i);
-                cout << "Venta agregada existosamente." << endl;
-                return;
+    if (opcion == 'S' || opcion == 's') {
+        FILE *temp = fopen("ventasTemporal.dat", "w");
+        for (int i = 0; i < 100; i++) {
+            if (v[i].estado == 1) {
+                fprintf(temp, "%s\n", v[i].codigo);
+                fprintf(temp, "%d\n", v[i].cantidadJuegos);
+                for (int j = 0; j < v[i].cantidadJuegos; j++) {
+                    fprintf(temp, "%s\n", v[i].codigosJuegos[j]);
+                }
+                fprintf(temp, "%d\n", v[i].fechaVenta.dia);
+                fprintf(temp, "%d\n", v[i].fechaVenta.mes);
+                fprintf(temp, "%d\n", v[i].fechaVenta.anio);
+                fprintf(temp, "%s\n", v[i].empleado.nombre);
+                fprintf(temp, "%d\n", v[i].estado);
             }
         }
-        cout << "No hay espacio para agregar más ventas." << endl;
+        fclose(temp);
+        remove("ventas.dat");
+        rename("ventasTemporal.dat", "ventas.dat");
+        cout << "Los datos se han guardado exitosamente." << endl;
+    }
+}
+
+void mostrarVentas(Ventas *v) {
+    for (int i = 0; i < 100; i++) {
+        if (v[i].estado != 0) {
+            printf("Fecha de la venta: %d/%d/%d\n", v[i].fechaVenta.dia, v[i].fechaVenta.mes, v[i].fechaVenta.anio);
+            printf("Código de la venta: %s\n", v[i].codigo);
+            printf("Nombre del empleado: %s\n", v[i].empleado.nombre);
+            printf("Cantidad de juegos comprados: %d\n", v[i].cantidadJuegos);
+            printf("Códigos de los juegos:\n");
+            for (int j = 0; j < v[i].cantidadJuegos; j++) {
+                printf("  %d: %s\n", j + 1, v[i].codigosJuegos[j]);
+            }
+        }
+    }
+}
+
+Ventas *buscarVenta(Ventas v[100], const char *codigo) {
+    for (int i = 0; i < 100; i++) {
+        if ((v[i].estado == 1 || v[i].estado == 2) && strcmp(v[i].codigo, codigo) == 0) {
+            return &(v[i]);
+        }
+    }
+    return NULL;
+}
+
+void registrarVenta(Ventas* v) {
+    char codigo[10];
+    cout << "Ingrese el código de la venta que desea registrar: ";
+    cin.ignore();
+    cin.getline(codigo, sizeof(codigo));
+
+    Ventas* ventaRegistrar = buscarVenta(v, codigo);
+
+    if (ventaRegistrar != NULL) {
+        cout << "La venta ya está registrada en el sistema." << endl;
+    } else {
+        bool espacioDisponible = false;
+        for (int i = 0; i < 100; i++) {
+            if (v[i].estado == 0) {
+                agregarVentas(v, i);
+                cout << "Venta registrada exitosamente." << endl;
+                espacioDisponible = true;
+                break;
+            }
+        }
+
+        if (!espacioDisponible) {
+            cout << "No hay espacio para agregar más ventas." << endl;
+        }
     }
 }

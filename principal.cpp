@@ -14,16 +14,18 @@ Ventas *buscarVentas(Ventas v[5], const char *codigo);
 void imprimirVentas(Ventas v);
 void eliminarVenta(Ventas v[5], const char *codigo);
 void mostrarVentas(Ventas v);
+void cargarVentas(Ventas* v);
 
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
 
     Juego j[100];
-    Ventas v[300];
+    Ventas v[100];
     Usuario u[10];
     cargarJuegos(j);
     cargarUsuarios(u);
+    cargarVentas(v);
     
     bool bandera = true;
 

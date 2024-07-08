@@ -38,8 +38,7 @@ struct Ventas
     int cantidadJuegos;
     Fecha fechaVenta;
     Usuario empleado;
-    int estado = 1; // EOF-Eliminado, 1-Existente, 2-Modificado, 3-Devuelto
-    double total = 0.00;
+    int estado = 1;
 };
 
 // Estructura Historial

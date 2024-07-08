@@ -13,6 +13,10 @@ void modificarJuego(Juego* j);
 void eliminarJuego(Juego* j);
 void mostrarJuegos(Juego* j);
 void guardarJuegos(Juego* j);
+void registrarVenta(Ventas* v);
+void mostrarVentas(Ventas* v);
+void guardarVentas(Ventas* v);
+
 //Recordar tener un usuario ya ingresado en el fichero (Usuario base)
 bool iniciarSesion(Usuario* j){
     char codigo[5] = "";
@@ -27,6 +31,35 @@ bool iniciarSesion(Usuario* j){
         }
     }
     return false;
+}
+void menuVentas(Ventas* v){
+    int opcionVenta = 0;
+
+    do{
+        cout<<"**********************************************"<<endl;
+        cout<<"Apartado de Ventas"<<endl;
+        cout<<"**********************************************"<<endl;
+        cout<<"1. Agregar Venta"<<endl;
+        cout<<"2. Mostrar todass las ventas"<<endl;
+        cout<<"3. Guardar cambios realizados en ventas"<<endl;
+        cout<<"0. Regresar..."<<endl;
+        cin>>opcionVenta;
+
+        switch (opcionVenta)
+        {
+        case 1:
+            registrarVenta(v);
+            break;
+        case 2:
+            mostrarVentas(v);
+            break;
+        case 3:
+            guardarVentas(v);
+            break;
+        default:
+            break;
+        }
+    }while(opcionVenta !=0);
 }
 void menuJuegos(Juego* j){
     int opcionJuego = 0;
@@ -111,7 +144,6 @@ void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
         cout<<"1. Usuarios"<<endl;
         cout<<"2. Juegos"<<endl;
         cout<<"3. Ventas"<<endl;
-        cout<<"4. Estadísticas"<<endl;
         cout<<"0. Salir"<<endl;
         cin>>opcionPrincipal;
 
@@ -124,10 +156,7 @@ void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
             menuJuegos(j);
             break;
         case 3:
-            cout<<"Ventas"<<endl;
-            break;
-        case 4:
-            cout<<"Estadísticas"<<endl;
+            menuVentas(v);
             break;
         default:
             cout<<"Cia ciao"<<endl;
