@@ -3,18 +3,13 @@
 #include <cstring>
 using namespace std;
 
-void probandoRama(){
-    cout << "Probando rama"<< endl;
-}
-
-void agregarVentas(Ventas v[5], int i)
+void agregarVentas(Ventas* v, int i)
 {
-    cout << "Probando Rama"<< endl;
     cout << "Ingrese el código de la venta: " << endl;
-    cin >> v[i].codigo;
-    cin.ignore();
-    cout << "¿Cuántos juegos se están comprando? " << endl;
-    cin >> v[i].cantidadJuegos;
+    cin.getline(v[i].codigo, 10);
+
+    cout << "Ingrese la cantidad de juegos que esta comprando: " << endl;
+    cin >>(v[i].cantidadJuegos);
     v[i].cantidadJuegos = min(v[i].cantidadJuegos, 15);
     for (int j = 0; j < v[i].cantidadJuegos; j++)
     {
@@ -31,6 +26,7 @@ void agregarVentas(Ventas v[5], int i)
     cin.ignore();
     cout << "Ingrese el nombre del empleado: " << endl;
     cin.getline(v[i].empleado.nombre, sizeof(v[i].empleado.nombre));
+
 }
 
 void guardarVentas(Ventas v[5])

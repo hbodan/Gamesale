@@ -18,21 +18,13 @@ struct Usuario
     int estado = 1; // EOF-Eliminado, 0-Vacío 1-Existente, 2-Modificado, 3-Devuelto
 };
 
-// Estructura Genero
-struct Genero
-{
-    char codigo[10] = "";
-    char nombre[30] = "";
-    char descripcion[100] = "";
-    int estado = 1;
-};
-
 // Estructura Juego
 struct Juego
 {
     char codigo[12] = "";
     char nombre[50] = "";
-    Genero genero;
+    char genero[30];
+    char descripcion [100];
     double precio = 0.00;
     int stock = 0;
     int estado = 1; // EOF-Eliminado, 1-Existente, 2-Modificado, 3-Devuelto
@@ -47,6 +39,7 @@ struct Ventas
     Fecha fechaVenta;
     Usuario empleado;
     int estado = 1; // EOF-Eliminado, 1-Existente, 2-Modificado, 3-Devuelto
+    double total = 0.00;
 };
 
 // Estructura Historial

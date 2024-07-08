@@ -2,7 +2,7 @@
 #include <iostream>
 #include <windows.h>
 using namespace std;
-
+void cargarJuegos(Juego* j);
 void guardarUsuarios(Usuario u[10]);
 void agregarUsuarios(Usuario u[10], int i);
 void registrarUsuario(Usuario u[10]);
@@ -22,9 +22,9 @@ int main()
     Juego j[100];
     Ventas v[300];
     Usuario u[10];
-
+    cargarJuegos(j);
     cargarUsuarios(u);
-
+    
     bool bandera = true;
 
     do{

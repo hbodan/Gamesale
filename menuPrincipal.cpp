@@ -8,7 +8,11 @@ void eliminarUsuario(Usuario* u);
 void mostrarUsuarios(Usuario* u);
 void modificarUsuario(Usuario* u);
 void guardarUsuarios(Usuario* u);
-
+void registrarJuego(Juego* j);
+void modificarJuego(Juego* j);
+void eliminarJuego(Juego* j);
+void mostrarJuegos(Juego* j);
+void guardarJuegos(Juego* j);
 //Recordar tener un usuario ya ingresado en el fichero (Usuario base)
 bool iniciarSesion(Usuario* j){
     char codigo[5] = "";
@@ -24,14 +28,50 @@ bool iniciarSesion(Usuario* j){
     }
     return false;
 }
+void menuJuegos(Juego* j){
+    int opcionJuego = 0;
 
+    do{
+        cout<<"**********************************************"<<endl;
+        cout<<"Apartado de juegos"<<endl;
+        cout<<"**********************************************"<<endl;
+        cout<<"1. Agregar Juego"<<endl;
+        cout<<"2. Editar juego"<<endl;
+        cout<<"3. Eliminar juego"<<endl;
+        cout<<"4. Mostrar todos los juegos"<<endl;
+        cout<<"5. Guardar cambios realizados en juegos"<<endl;
+        cout<<"0. Regresar..."<<endl;
+        cin>>opcionJuego;
+
+        switch (opcionJuego)
+        {
+        case 1:
+            registrarJuego(j);
+            break;
+        case 2:
+            modificarJuego(j);
+            break;
+        case 3:
+            eliminarJuego(j);
+            break;
+        case 4:
+            mostrarJuegos(j);
+            break;
+        case 5:
+            guardarJuegos(j);
+            break;
+        default:
+            break;
+        }
+    }while(opcionJuego !=0);
+}
 void menuUsuarios(Usuario* u){
     int opcionUsuario = 0;
 
     do{
-        cout<<"*********************************************"<<endl;
+        cout<<"**********************************************"<<endl;
         cout<<"Apartado Usuario"<<endl;
-        cout<<"*********************************************"<<endl;
+        cout<<"**********************************************"<<endl;
         cout<<"1. Agregar Usuario"<<endl;
         cout<<"2. Editar Usuario"<<endl;
         cout<<"3. Eliminar Usuario"<<endl;
@@ -64,7 +104,7 @@ void menuUsuarios(Usuario* u){
 }
 
 
-void mostrarMenuPrincipal(Juego* p, Ventas* v, Usuario* u){
+void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
     int opcionPrincipal = 0;
     do{
         cout<<"Bienvenidos a GameSale"<<endl;
@@ -81,7 +121,7 @@ void mostrarMenuPrincipal(Juego* p, Ventas* v, Usuario* u){
             menuUsuarios(u);
             break;
         case 2:
-            cout<<"Juegos"<<endl;
+            menuJuegos(j);
             break;
         case 3:
             cout<<"Ventas"<<endl;
