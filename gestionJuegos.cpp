@@ -5,6 +5,7 @@ using namespace std;
 
 void agregarJuegos(Juego* j, int i)
 {
+ 
     cout << "Ingrese el código del juego: " << endl;
     cin.getline(j[i].codigo, 12);
 
@@ -28,30 +29,35 @@ void guardarJuegos(Juego* j)
 {
     char opcion;
     cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
-    cin>>opcion;
-    cout<<opcion<<endl;
+    cin >> opcion;
+    cout << opcion << endl;
 
-    if (opcion == 'S' ||opcion == 's' )
+    if (opcion == 'S' || opcion == 's')
     {
-        FILE *temp, *archi;
-        temp = fopen("juegosTemporal.dat", "w");
+        FILE *archi;
+        archi = fopen("juegos.dat", "w+"); // Cambiado a modo de actualización
+
+        if (archi == NULL)
+        {
+            perror("Error al abrir el archivo juegos.dat para escritura.");
+            return;
+        }
+
         for (int i = 0; i < 100; i++)
         {
-            fprintf(temp, "%s\n", j[i].codigo);
-            fprintf(temp, "%s\n", j[i].nombre);
-            fprintf(temp, "%s\n", j[i].genero);
-            fprintf(temp, "%s\n", j[i].descripcion);
-            fprintf(temp, "%lf\n", j[i].precio);
-            fprintf(temp, "%d\n", j[i].stock);
-            fprintf(temp, "%d\n", j[i].estado);
+            if (j[i].estado != 0) // Guardar solo los juegos que están en uso
+            {
+                fprintf(archi, "%s\n", j[i].codigo);
+                fprintf(archi, "%s\n", j[i].nombre);
+                fprintf(archi, "%s\n", j[i].genero);
+                fprintf(archi, "%s\n", j[i].descripcion);
+                fprintf(archi, "%lf\n", j[i].precio);
+                fprintf(archi, "%d\n", j[i].stock);
+                fprintf(archi, "%d\n", j[i].estado);
+            }
         }
-        fclose(temp);
-        printf("Los datos se han guardado exitosamente...\n");
-        if((archi=fopen("juegos.dat","r"))!=NULL){
-            fclose(archi);
-            remove("juegos.dat");
-        }    
-        rename("juegosTemporal.dat","juegos.dat");
+
+        fclose(archi);
         printf("Los datos se han guardado exitosamente...\n");
     }
     system("pause");
@@ -60,7 +66,7 @@ void guardarJuegos(Juego* j)
 void cargarJuegos(Juego* j)
 {
     FILE *archi;
-    archi = fopen("juegos.dat", "r"); // Abrir en modo lectura
+    archi = fopen("juegos.dat", "r");
 
     if (archi == NULL)
     {
@@ -74,12 +80,12 @@ void cargarJuegos(Juego* j)
 
     int i = 0;
     while (i < 100 &&
-           fscanf(archi, "%12s\n", j[i].codigo) != EOF &&
+           fscanf(archi, "%11s\n", j[i].codigo) != EOF &&
            fgets(j[i].nombre, sizeof(j[i].nombre), archi) != NULL &&
            fgets(j[i].genero, sizeof(j[i].genero), archi) != NULL &&
            fgets(j[i].descripcion, sizeof(j[i].descripcion), archi) != NULL &&
-           fscanf(archi, "%d\n", &j[i].stock) != EOF &&
            fscanf(archi, "%lf\n", &j[i].precio) != EOF && // Leer como double
+           fscanf(archi, "%d\n", &j[i].stock) != EOF &&
            fscanf(archi, "%d\n", &j[i].estado) != EOF)
     {
         j[i].codigo[strcspn(j[i].codigo, "\n")] = '\0';
@@ -89,10 +95,9 @@ void cargarJuegos(Juego* j)
         i++;
     }
 
-    // Marcar los espacios restantes como vacíos
     for (; i < 100; i++)
     {
-        j[i].estado = 0; // Marcar como vacío
+        j[i].estado = 0;
     }
 
     fclose(archi);

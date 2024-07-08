@@ -18,23 +18,22 @@ void cargarVentas(Ventas* v) {
     }
 
     int i = 0;
-    while (i < 100 && fscanf(archi, "%9s", v[i].codigo) == 1) {
-        if (fscanf(archi, "%d", &v[i].cantidadJuegos) != 1) break;
+    while (i < 100 && fscanf(archi, "%9s\n", v[i].codigo) == 1) {
+        if (fscanf(archi, "%d\n", &v[i].cantidadJuegos) != 1) break;
 
         for (int j = 0; j < v[i].cantidadJuegos; j++) {
-            if (fscanf(archi, "%11s", v[i].codigosJuegos[j]) != 1) break;
+            if (fscanf(archi, "%11s\n", v[i].codigosJuegos[j]) != 1) break;
         }
 
-        if (fscanf(archi, "%d", &v[i].fechaVenta.dia) != 1) break;
-        if (fscanf(archi, "%d", &v[i].fechaVenta.mes) != 1) break;
-        if (fscanf(archi, "%d", &v[i].fechaVenta.anio) != 1) break;
+        if (fscanf(archi, "%d\n", &v[i].fechaVenta.dia) != 1) break;
+        if (fscanf(archi, "%d\n", &v[i].fechaVenta.mes) != 1) break;
+        if (fscanf(archi, "%d\n", &v[i].fechaVenta.anio) != 1) break;
 
         fgets(v[i].empleado.nombre, sizeof(v[i].empleado.nombre), archi);
         v[i].empleado.nombre[strcspn(v[i].empleado.nombre, "\n")] = '\0';
 
-        if (fscanf(archi, "%d", &v[i].estado) != 1) break;
+        if (fscanf(archi, "%d\n", &v[i].estado) != 1) break;
 
-        v[i].codigo[strcspn(v[i].codigo, "\n")] = '\0';
         i++;
     }
 
@@ -48,7 +47,7 @@ void cargarVentas(Ventas* v) {
 
 void agregarVentas(Ventas* v, int i) {
     cout << "Ingrese el código de la venta: ";
-    cin.ignore(); // Para limpiar el buffer
+    cin.ignore();
     cin.getline(v[i].codigo, sizeof(v[i].codigo));
 
     cout << "Ingrese la cantidad de juegos que está comprando: ";
@@ -76,9 +75,9 @@ void guardarVentas(Ventas* v) {
     cin >> opcion;
 
     if (opcion == 'S' || opcion == 's') {
-        FILE *temp = fopen("ventasTemporal.dat", "w");
+        FILE *temp = fopen("ventasTemporal.dat", "w+");
         for (int i = 0; i < 100; i++) {
-            if (v[i].estado == 1) {
+            if (v[i].estado != 0) { // Guardar solo ventas con estado válido
                 fprintf(temp, "%s\n", v[i].codigo);
                 fprintf(temp, "%d\n", v[i].cantidadJuegos);
                 for (int j = 0; j < v[i].cantidadJuegos; j++) {
@@ -92,6 +91,7 @@ void guardarVentas(Ventas* v) {
             }
         }
         fclose(temp);
+
         remove("ventas.dat");
         rename("ventasTemporal.dat", "ventas.dat");
         cout << "Los datos se han guardado exitosamente." << endl;
