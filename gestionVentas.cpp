@@ -47,7 +47,6 @@ void cargarVentas(Ventas* v) {
 
 void agregarVentas(Ventas* v, int i) {
     cout << "Ingrese el código de la venta: ";
-    cin.ignore();
     cin.getline(v[i].codigo, sizeof(v[i].codigo));
 
     cout << "Ingrese la cantidad de juegos que está comprando: ";
