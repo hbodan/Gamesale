@@ -1,7 +1,15 @@
 #include "datos.h"
 #include <iostream>
 #include <cstring>
+#include <windows.h>
+#include <thread>
+#include <chrono>
 using namespace std;
+
+#define ANSI_COLOR_ROJO     "\x1b[38;5;1m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+#define ANSI_COLOR_AZUL     "\x1b[38;5;4m"
+#define ANSI_COLOR_VERDE     "\x1b[38;5;2m"
 
 void leerFechaSistema(Fecha &hoy);
 
@@ -70,7 +78,7 @@ void agregarVentas(Ventas* v, int i) {
 
 void guardarVentas(Ventas* v) {
     char opcion;
-    cout << "---------------------------------------------------------------------";
+    cout << "---------------------------------------------------------------------"<<endl;
     cout << "¿Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
     cin >> opcion;
 
@@ -94,13 +102,41 @@ void guardarVentas(Ventas* v) {
 
         remove("ventas.dat");
         rename("ventasTemporal.dat", "ventas.dat");
-        cout << "Los datos se han guardado exitosamente." << endl;
+        cout <<ANSI_COLOR_VERDE << "Datos guardados exitosamente. " <<ANSI_COLOR_AZUL<<"Volviendo al menú" << ANSI_COLOR_RESET;
+        cout.flush();
+
+        for (int i = 0; i < 5; ++i) {
+            this_thread::sleep_for(chrono::milliseconds(300));
+            cout<<ANSI_COLOR_AZUL << ".";
+            cout.flush();
+        }
+
+        cout <<ANSI_COLOR_AZUL << " Listo!" << ANSI_COLOR_RESET<<endl;
+        this_thread::sleep_for(chrono::milliseconds(500));
+    }else{
+        cout <<ANSI_COLOR_ROJO << "Has cancelado el guardado. " <<ANSI_COLOR_AZUL<<"Volviendo al menú" << ANSI_COLOR_RESET;
+        cout.flush();
+
+        for (int i = 0; i < 5; ++i) {
+            this_thread::sleep_for(chrono::milliseconds(300));
+            cout<<ANSI_COLOR_AZUL << ".";
+            cout.flush();
+        }
+
+        cout <<ANSI_COLOR_AZUL << " Listo!" << ANSI_COLOR_RESET<<endl;
+        this_thread::sleep_for(chrono::milliseconds(500));
     }
 }
 
 void mostrarVentas(Ventas *v) {
+    system("cls");
+    printf("--------------------------------------------------\n");
+    printf("|              REGISTROS DE VENTAS               |\n");
+    printf("--------------------------------------------------\n");
+    int contador = 0;
     for (int i = 0; i < 100; i++) {
         if (v[i].estado != 0) {
+            printf("--------------------------------------------------\n");
             printf("Fecha de la venta: %d/%d/%d\n", v[i].fechaVenta.dia, v[i].fechaVenta.mes, v[i].fechaVenta.anio);
             printf("Código de la venta: %s\n", v[i].codigo);
             printf("Nombre del empleado: %s\n", v[i].empleado.nombre);
@@ -109,8 +145,13 @@ void mostrarVentas(Ventas *v) {
             for (int j = 0; j < v[i].cantidadJuegos; j++) {
                 printf("  %d: %s\n", j + 1, v[i].codigosJuegos[j]);
             }
+            printf("--------------------------------------------------\n");
+            contador+=1;
         }
     }
+    cout << ANSI_COLOR_VERDE << contador <<" Registros mostrados exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+    system("pause");
+    system("cls");
 }
 
 Ventas *buscarVenta(Ventas v[100], const char *codigo) {
@@ -131,20 +172,24 @@ void registrarVenta(Ventas* v) {
     Ventas* ventaRegistrar = buscarVenta(v, codigo);
 
     if (ventaRegistrar != NULL) {
-        cout << "La venta ya está registrada en el sistema." << endl;
+        cout << ANSI_COLOR_ROJO << "La venta ya está registrada en el sistema. " << ANSI_COLOR_AZUL <<"Presiona ENTER para regresar al menú..."<<ANSI_COLOR_RESET<<endl;
+        system("pause");
     } else {
         bool espacioDisponible = false;
         for (int i = 0; i < 100; i++) {
             if (v[i].estado == 0) {
+                cout <<ANSI_COLOR_VERDE << "<<<Código Disponible!!! Sigue rellenando los datos...>>>"<< ANSI_COLOR_RESET<<endl;
                 agregarVentas(v, i);
-                cout << "Venta registrada exitosamente." << endl;
+                cout << ANSI_COLOR_VERDE << "Venta registrada exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+                system("pause");
                 espacioDisponible = true;
                 break;
             }
         }
 
         if (!espacioDisponible) {
-            cout << "No hay espacio para agregar más ventas." << endl;
+            cout << ANSI_COLOR_ROJO << "No hay espacio para agregar mas ventas. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+            system("pause");
         }
     }
 }
