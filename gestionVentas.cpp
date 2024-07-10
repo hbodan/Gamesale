@@ -61,6 +61,9 @@ void agregarVentas(Ventas* v, int i, const char *codigo, Usuario* usuario, Juego
 
     cout << "Ingrese la cantidad de juegos que está comprando: ";
     cin >> v[i].cantidadJuegos;
+    if(v[i].cantidadJuegos > 15){
+        cout << ANSI_COLOR_ROJO <<"La cantidad ingresada supera el máximo permitido por factura. "<<ANSI_COLOR_AZUL<< "Solo se le facturarán 15 elementos."<< ANSI_COLOR_RESET <<endl;
+    }
     v[i].cantidadJuegos = min(v[i].cantidadJuegos, 15);
     cin.ignore(); // Para limpiar el buffer después de la entrada de enteros
 
