@@ -32,6 +32,7 @@ void agregarJuegos(Juego* j, int i, const char *codigo)
     cin >> j[i].stock;
     j[i].estado = 1;
 }
+
 void guardarJuegos(Juego* j)
 {
     char opcion;
@@ -93,6 +94,35 @@ void guardarJuegos(Juego* j)
         this_thread::sleep_for(chrono::milliseconds(500));
     }
     
+}
+
+void actualizarCantidadJuegos(Juego* j)
+{
+
+    FILE *archi;
+    archi = fopen("juegos.dat", "w+"); // Cambiado a modo de actualización
+
+    if (archi == NULL)
+    {
+        perror("Error al intentar abrir el archivo juegos.dat para escritura.");
+        return;
+    }
+
+    for (int i = 0; i < 100; i++)
+    {
+        if (j[i].estado != 0) // Guardar solo los juegos que están en uso
+        {
+            fprintf(archi, "%s\n", j[i].codigo);
+            fprintf(archi, "%s\n", j[i].nombre);
+            fprintf(archi, "%s\n", j[i].genero);
+            fprintf(archi, "%s\n", j[i].descripcion);
+            fprintf(archi, "%lf\n", j[i].precio);
+            fprintf(archi, "%d\n", j[i].stock);
+            fprintf(archi, "%d\n", j[i].estado);
+        }
+    }
+
+    fclose(archi);
 }
 
 void cargarJuegos(Juego* j)

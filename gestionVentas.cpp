@@ -12,6 +12,8 @@ using namespace std;
 #define ANSI_COLOR_VERDE     "\x1b[38;5;2m"
 
 void leerFechaSistema(Fecha &hoy);
+Juego *buscarJuego(Juego j[100], const char *codigo);
+void actualizarCantidadJuegos(Juego* j);
 
 void cargarVentas(Ventas* v) {
     FILE *archi;
@@ -53,30 +55,42 @@ void cargarVentas(Ventas* v) {
     fclose(archi);
 }
 
-void agregarVentas(Ventas* v, int i) {
-    cout << "Ingrese el código de la venta: ";
-    cin.getline(v[i].codigo, sizeof(v[i].codigo));
+void agregarVentas(Ventas* v, int i, const char *codigo, Usuario* usuario, Juego* j) {
+
+    strcpy(v[i].codigo, codigo);
 
     cout << "Ingrese la cantidad de juegos que está comprando: ";
     cin >> v[i].cantidadJuegos;
     v[i].cantidadJuegos = min(v[i].cantidadJuegos, 15);
     cin.ignore(); // Para limpiar el buffer después de la entrada de enteros
 
-    for (int j = 0; j < v[i].cantidadJuegos; j++) {
-        cout << "Ingrese el código del juego " << j + 1 << ": ";
-        cin.getline(v[i].codigosJuegos[j], sizeof(v[i].codigosJuegos[j]));
+    int contadorJuegos = 0;
+    char codigoJuego[12] = "";
+
+    while (contadorJuegos < v[i].cantidadJuegos) {
+        cout << "Ingrese el código del juego " << contadorJuegos + 1 << ": ";
+        cin.getline(codigoJuego, 12);
+
+        Juego *juego = buscarJuego(j, codigoJuego);
+
+        if ((juego != NULL) && (juego->stock > 0) && (juego->estado != 3)) {
+            strcpy(v[i].codigosJuegos[contadorJuegos], codigoJuego);
+            cout << ANSI_COLOR_VERDE <<"Juego agregado exitosamente. "<< ANSI_COLOR_AZUL<<"Por favor agrega correctamente..."<< ANSI_COLOR_RESET <<endl;
+            juego->stock--;
+            contadorJuegos++;
+        } else {
+            cout << ANSI_COLOR_ROJO <<"Juego no disponible. "<<ANSI_COLOR_AZUL<< "Por favor agrega correctamente..."<< ANSI_COLOR_RESET <<endl;
+        }
     }
 
     // Asignar la fecha del sistema
     leerFechaSistema(v[i].fechaVenta);
-
-    cout << "Ingrese el nombre del empleado: ";
-    cin.getline(v[i].empleado.nombre, sizeof(v[i].empleado.nombre));
+    strcpy(v[i].empleado.nombre, usuario->nombre);
 
     v[i].estado = 1; // Marcar como existente
 }
 
-void guardarVentas(Ventas* v) {
+void guardarVentas(Ventas* v, Juego* j) {
     char opcion;
     cout << "---------------------------------------------------------------------"<<endl;
     cout << "¿Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
@@ -88,8 +102,8 @@ void guardarVentas(Ventas* v) {
             if (v[i].estado != 0) { // Guardar solo ventas con estado válido
                 fprintf(temp, "%s\n", v[i].codigo);
                 fprintf(temp, "%d\n", v[i].cantidadJuegos);
-                for (int j = 0; j < v[i].cantidadJuegos; j++) {
-                    fprintf(temp, "%s\n", v[i].codigosJuegos[j]);
+                for (int k = 0; k < v[i].cantidadJuegos; k++) {
+                    fprintf(temp, "%s\n", v[i].codigosJuegos[k]);
                 }
                 fprintf(temp, "%d\n", v[i].fechaVenta.dia);
                 fprintf(temp, "%d\n", v[i].fechaVenta.mes);
@@ -102,6 +116,9 @@ void guardarVentas(Ventas* v) {
 
         remove("ventas.dat");
         rename("ventasTemporal.dat", "ventas.dat");
+
+        actualizarCantidadJuegos(j);
+
         cout <<ANSI_COLOR_VERDE << "Datos guardados exitosamente. " <<ANSI_COLOR_AZUL<<"Volviendo al menú" << ANSI_COLOR_RESET;
         cout.flush();
 
@@ -128,7 +145,7 @@ void guardarVentas(Ventas* v) {
     }
 }
 
-void mostrarVentas(Ventas *v) {
+void mostrarVentas(Ventas* v, Juego* j) {
     system("cls");
     printf("--------------------------------------------------\n");
     printf("|              REGISTROS DE VENTAS               |\n");
@@ -142,14 +159,19 @@ void mostrarVentas(Ventas *v) {
             printf("Nombre del empleado: %s\n", v[i].empleado.nombre);
             printf("Cantidad de juegos comprados: %d\n", v[i].cantidadJuegos);
             printf("Códigos de los juegos:\n");
-            for (int j = 0; j < v[i].cantidadJuegos; j++) {
-                printf("  %d: %s\n", j + 1, v[i].codigosJuegos[j]);
+            for (int k = 0; k < v[i].cantidadJuegos; k++) {
+                Juego *juego = buscarJuego(j, v[i].codigosJuegos[k]);
+                if (juego != NULL) {
+                     printf("  %d: Código de juego: %s, Nombre: %s\n", k + 1, v[i].codigosJuegos[k], juego->nombre);
+                } else {
+                    printf("  %d: Código de juego no encontrado\n", k + 1);
+                }
             }
             printf("--------------------------------------------------\n");
-            contador+=1;
+            contador++;
         }
     }
-    cout << ANSI_COLOR_VERDE << contador <<" Registros mostrados exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+    cout << "\033[32m" << contador << " Registros mostrados exitosamente. \033[34mPresiona ENTER para continuar...\033[0m" << endl;
     system("pause");
     system("cls");
 }
@@ -163,7 +185,7 @@ Ventas *buscarVenta(Ventas v[100], const char *codigo) {
     return NULL;
 }
 
-void registrarVenta(Ventas* v) {
+void registrarVenta(Ventas* v, Usuario* usuario, Juego* j) {
     char codigo[10];
     cout << "Ingrese el código de la venta que desea registrar: ";
     cin.ignore();
@@ -179,7 +201,7 @@ void registrarVenta(Ventas* v) {
         for (int i = 0; i < 100; i++) {
             if (v[i].estado == 0) {
                 cout <<ANSI_COLOR_VERDE << "<<<Código Disponible!!! Sigue rellenando los datos...>>>"<< ANSI_COLOR_RESET<<endl;
-                agregarVentas(v, i);
+                agregarVentas(v, i, codigo, usuario, j);
                 cout << ANSI_COLOR_VERDE << "Venta registrada exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
                 system("pause");
                 espacioDisponible = true;

@@ -22,11 +22,11 @@ void modificarJuego(Juego* j);
 void eliminarJuego(Juego* j);
 void mostrarJuegos(Juego* j);
 void guardarJuegos(Juego* j);
-void registrarVenta(Ventas* v);
-void mostrarVentas(Ventas* v);
-void guardarVentas(Ventas* v);
+void registrarVenta(Ventas* v, Usuario* usuario, Juego* j);
+void mostrarVentas(Ventas* v, Juego* j);
+void guardarVentas(Ventas* v, Juego* j);
 Usuario *buscarUsuario(Usuario u[10], const char *codigo);
-void mostrarMenuPrincipal(Juego* p, Ventas* v, Usuario* u);
+void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u, Usuario* usuario);
 
 bool inicioSesion(Usuario* u){
     char contraseniaIngresada[20] = "";
@@ -84,7 +84,7 @@ void iniciarSesion(Juego* j, Ventas* v, Usuario* u){
                     }
                     cout <<ANSI_COLOR_VERDE << " Listo!" << ANSI_COLOR_RESET<<endl;
                     this_thread::sleep_for(chrono::milliseconds(500));
-                    mostrarMenuPrincipal(j,v,u);
+                    mostrarMenuPrincipal(j,v,u,usuarioIngresado);
                 }else{
                     cout << ANSI_COLOR_ROJO <<"Contraseña Incorrecta.  " << ANSI_COLOR_AZUL << "Presiona ENTER para intentar de nuevo..." << ANSI_COLOR_RESET<<endl;
                     system("pause");
@@ -100,7 +100,7 @@ void iniciarSesion(Juego* j, Ventas* v, Usuario* u){
 }
 
 
-void menuVentas(Ventas* v){
+void menuVentas(Juego* j, Ventas* v, Usuario* usuario){
     int opcionVenta = 0;
 
     do{
@@ -120,13 +120,13 @@ void menuVentas(Ventas* v){
         switch (opcionVenta)
         {
         case 1:
-            registrarVenta(v);
+            registrarVenta(v, usuario, j);
             break;
         case 2:
-            mostrarVentas(v);
+            mostrarVentas(v, j);
             break;
         case 3:
-            guardarVentas(v);
+            guardarVentas(v, j);
             break;
         default:
         cout<< ANSI_COLOR_VERDE<< "Ciao ciao"<< ANSI_COLOR_RESET<<endl;
@@ -219,7 +219,7 @@ void menuUsuarios(Usuario* u){
 }
 
 
-void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
+void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u, Usuario* usuario){
     int opcionPrincipal = 0;
     do{
         system("cls");
@@ -244,7 +244,7 @@ void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
             menuJuegos(j);
             break;
         case 3:
-            menuVentas(v);
+            menuVentas(j,v,usuario);
             break;
         case 0:
             cout<<ANSI_COLOR_AZUL<<"Cia ciao!!!"<<ANSI_COLOR_RESET<<endl;
