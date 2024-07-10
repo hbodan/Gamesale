@@ -70,6 +70,7 @@ void agregarVentas(Ventas* v, int i) {
 
 void guardarVentas(Ventas* v) {
     char opcion;
+    cout << "---------------------------------------------------------------------";
     cout << "¿Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
     cin >> opcion;
 

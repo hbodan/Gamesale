@@ -28,9 +28,10 @@ void agregarJuegos(Juego* j, int i)
 void guardarJuegos(Juego* j)
 {
     char opcion;
+    cout<< "---------------------------------------------------------------";
     cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
     cin >> opcion;
-    cout << opcion << endl;
+    
 
     if (opcion == 'S' || opcion == 's')
     {
