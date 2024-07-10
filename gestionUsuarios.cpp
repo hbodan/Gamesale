@@ -260,7 +260,8 @@ void registrarUsuario(Usuario* u)
 
         if (!espacioDisponible)
         {
-            cout << "No hay espacio para agregar más usuarios." << endl;
+            cout << ANSI_COLOR_ROJO << "No hay espacio para agregar a mas usuarios. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+            system("pause");
         }
     }
 }

@@ -1,13 +1,20 @@
 #include "datos.h"
 #include <iostream>
+#include <cstring>
 #include <windows.h>
+#include <thread>
+#include <chrono>
 using namespace std;
 
-void agregarJuegos(Juego* j, int i)
+#define ANSI_COLOR_ROJO     "\x1b[38;5;1m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+#define ANSI_COLOR_AZUL     "\x1b[38;5;4m"
+#define ANSI_COLOR_VERDE     "\x1b[38;5;2m"
+
+void agregarJuegos(Juego* j, int i, const char *codigo)
 {
  
-    cout << "Ingrese el código del juego: " << endl;
-    cin.getline(j[i].codigo, 12);
+    strcpy(j[i].codigo, codigo);
 
     cout << "Ingrese el titulo del juego: " << endl;
     cin.getline(j[i].nombre, 50);
@@ -28,7 +35,7 @@ void agregarJuegos(Juego* j, int i)
 void guardarJuegos(Juego* j)
 {
     char opcion;
-    cout<< "---------------------------------------------------------------";
+    cout<< "---------------------------------------------------------------"<<endl;
     cout << "Está seguro que desea guardar los cambios permanentemente (S/N)?: ";
     cin >> opcion;
     
@@ -59,9 +66,33 @@ void guardarJuegos(Juego* j)
         }
 
         fclose(archi);
-        printf("Los datos se han guardado exitosamente...\n");
+
+        cout <<ANSI_COLOR_VERDE << "Datos guardados exitosamente. " <<ANSI_COLOR_AZUL<<"Volviendo al menú" << ANSI_COLOR_RESET;
+        cout.flush();
+
+        for (int i = 0; i < 5; ++i) {
+            this_thread::sleep_for(chrono::milliseconds(300));
+            cout<<ANSI_COLOR_AZUL << ".";
+            cout.flush();
+        }
+
+        cout <<ANSI_COLOR_AZUL << " Listo!" << ANSI_COLOR_RESET<<endl;
+        this_thread::sleep_for(chrono::milliseconds(500));
+
+    }else{
+        cout <<ANSI_COLOR_ROJO << "Has cancelado el guardado. " <<ANSI_COLOR_AZUL<<"Volviendo al menú" << ANSI_COLOR_RESET;
+        cout.flush();
+
+        for (int i = 0; i < 5; ++i) {
+            this_thread::sleep_for(chrono::milliseconds(300));
+            cout<<ANSI_COLOR_AZUL << ".";
+            cout.flush();
+        }
+
+        cout <<ANSI_COLOR_AZUL << " Listo!" << ANSI_COLOR_RESET<<endl;
+        this_thread::sleep_for(chrono::milliseconds(500));
     }
-    system("pause");
+    
 }
 
 void cargarJuegos(Juego* j)
@@ -105,18 +136,27 @@ void cargarJuegos(Juego* j)
 }
 void mostrarJuegos(Juego* j)
 {
+    system("cls");
+    printf("--------------------------------------------------\n");
+    printf("|              REGISTROS DE JUEGOS               |\n");
+    printf("--------------------------------------------------\n");
+    int contador = 0;
     for(int i =0; i<100; i++){
         if(j[i].estado == 1 || j[i].estado == 2){
-            printf("----------------------------------------------\n");
-            printf("Código del juego: %s\n", j[i].codigo);
-            printf("Titulo del juego: %s\n", j[i].nombre);
-            printf("Genero del juego: %s\n", j[i].genero);
-            printf("Descripcion del juego: %s\n", j[i].descripcion);            
-            printf("precio del juego: %lf\n", j[i].precio);
-            printf("stock del juego: %d\n", j[i].stock);
+            printf("--------------------------------------------------\n");
+            printf("Código del juego:       %s\n", j[i].codigo);
+            printf("Titulo del juego:       %s\n", j[i].nombre);
+            printf("Genero del juego:       %s\n", j[i].genero);
+            printf("Descripcion del juego:  %s\n", j[i].descripcion);            
+            printf("precio del juego:       %lf\n", j[i].precio);
+            printf("stock del juego:        %d\n", j[i].stock);
+            printf("--------------------------------------------------\n");
+            contador+=1;
         }
     }
-    printf("----------------------------------------------\n");
+    cout << ANSI_COLOR_VERDE << contador <<" Registros mostrados exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+    system("pause");
+    system("cls");
 }
 
 Juego *buscarJuego(Juego j[100], const char *codigo)
@@ -124,7 +164,7 @@ Juego *buscarJuego(Juego j[100], const char *codigo)
     Juego *jg = NULL;
     for (int i = 0; i < 100; i++)
     {
-        if ((j[i].estado == 1 || j[i].estado == 2) && strcmp(j[i].codigo, codigo) == 0)
+        if ((j[i].estado == 1 || j[i].estado == 2 || j[i].estado == 3) && strcmp(j[i].codigo, codigo) == 0)
         {
             jg = &(j[i]);
             break;
@@ -145,12 +185,14 @@ void eliminarJuego(Juego* j)
 
     if (juegoEliminar != NULL)
     {
-        juegoEliminar->estado = 0;
-        cout << "Juego eliminado exitosamente." << endl;
+        juegoEliminar->estado = 3;
+        cout << ANSI_COLOR_VERDE << "Juego eliminado exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+        system("pause");
     }
     else
     {
-        cout << "No se encontró el juego con el código especificado." << endl;
+        cout << ANSI_COLOR_ROJO << "No se encontró el juego con el código especificado. " << ANSI_COLOR_AZUL <<"Presiona ENTER para regresar al menú..."<<ANSI_COLOR_RESET<<endl;
+        system("pause");
     }
 }
 
@@ -180,7 +222,8 @@ void modificarJuego(Juego* j)
 
     if (juegoModificar != NULL)
     {
-        cout << "El juego está registrado en el sistema. Proceda a editar los datos: " << endl;
+        cout << ANSI_COLOR_VERDE << "El juego está registrado en el sistema. "<< ANSI_COLOR_AZUL << "Edita tu juego..."<<ANSI_COLOR_RESET<<endl;
+        cout.flush();
 
         for(int i = 0; i<100; i++){
             if(j[i].estado!=0){
@@ -191,11 +234,14 @@ void modificarJuego(Juego* j)
             }
             
         }
-        cout << "Juego editado exitosamente." << endl;
+        cout << ANSI_COLOR_VERDE << "Juego editado exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+        system("pause");
     }
     else
     {
-        cout << "No se encontró el juego con el código especificado." << endl;
+        cout << ANSI_COLOR_ROJO << "No se encontró el juego con el código especificado. " << ANSI_COLOR_AZUL <<"Presiona ENTER para regresar al menú..."<<ANSI_COLOR_RESET<<endl;
+        cout.flush();
+        system("pause");
     }
 }
 
@@ -210,7 +256,8 @@ void registrarJuego(Juego* j)
 
     if (juegoRegistrar != NULL)
     {
-        cout << "El juego ya está registrado en el sistema." << endl;
+        cout << ANSI_COLOR_ROJO << "El juego ya está registrado en el sistema. " << ANSI_COLOR_AZUL <<"Presiona ENTER para regresar al menú..."<<ANSI_COLOR_RESET<<endl;
+        system("pause");
     }
     else
     {
@@ -219,8 +266,10 @@ void registrarJuego(Juego* j)
         {
             if (j[i].estado == 0)
             {
-                agregarJuegos(j, i);
-                cout << "Juego registrado exitosamente." << endl;
+                cout <<ANSI_COLOR_VERDE << "<<<Código Disponible!!! Sigue rellenando los datos...>>>"<< ANSI_COLOR_RESET<<endl;
+                agregarJuegos(j, i, codigo);
+                cout << ANSI_COLOR_VERDE << "Juego registrado exitosamente. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+                system("pause");
                 espacioDisponible = true;
                 break;
             }
@@ -228,7 +277,8 @@ void registrarJuego(Juego* j)
 
         if (!espacioDisponible)
         {
-            cout << "No hay espacio para agregar más juegos." << endl;
+            cout << ANSI_COLOR_ROJO << "No hay espacio para agregar mas juegos. " << ANSI_COLOR_AZUL<<"Presiona ENTER para continuar..." << ANSI_COLOR_RESET<<endl;
+            system("pause");
         }
     }
 }
