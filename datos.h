@@ -1,5 +1,3 @@
-// Estado = 0 (De alta) Estado = 1 (Eliminado)
-
 // Estructura Fecha
 struct Fecha
 {
@@ -15,7 +13,7 @@ struct Usuario
     char nombre[20] = "";
     char usuario[15] = "";
     char contrasenia[20] = "";
-    int estado = 1; // EOF-Eliminado, 0-Vacío 1-Existente, 2-Modificado, 3-Devuelto
+    int estado = 1; // EOF-Eliminado, 0-Vacío 1-Existente, 2-Modificado, 3-Eliminado
 };
 
 // Estructura Juego
@@ -27,7 +25,7 @@ struct Juego
     char descripcion [100];
     double precio = 0.00;
     int stock = 0;
-    int estado = 1; // EOF-Eliminado, 1-Existente, 2-Modificado, 3-Devuelto
+    int estado = 1; // EOF-Eliminado, 1-Existente, 2-Modificado, 3-Eliminado
 };
 
 // Estructura Venta

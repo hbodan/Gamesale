@@ -1,7 +1,13 @@
 #include "datos.h"
 #include <iostream>
 #include <cstring>
+#include <windows.h>
+#include <conio.h>
 using namespace std;
+
+#define ANSI_COLOR_ROJO     "\x1b[38;5;1m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+#define ANSI_COLOR_AZUL     "\x1b[38;5;4m"
 
 void registrarUsuario(Usuario* u);
 void eliminarUsuario(Usuario* u);
@@ -16,22 +22,75 @@ void guardarJuegos(Juego* j);
 void registrarVenta(Ventas* v);
 void mostrarVentas(Ventas* v);
 void guardarVentas(Ventas* v);
+Usuario *buscarUsuario(Usuario u[10], const char *codigo);
+void mostrarMenuPrincipal(Juego* p, Ventas* v, Usuario* u);
 
-//Recordar tener un usuario ya ingresado en el fichero (Usuario base)
-bool iniciarSesion(Usuario* j){
-    char codigo[5] = "";
-    cout<<"Digite el código del usuario"<<endl;
-    cin.getline(codigo, 5);
+bool inicioSesion(Usuario* u){
+    char contraseniaIngresada[20] = "";
+    system("cls");
+    cout << "---------------------------------------" << endl;
+    cout << "Hola: "<< u->nombre << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "|                                     |" << endl;
+    cout << "| Por favor, digite la contraseña     |" << endl;
+    cout << "| del usuario:                        |" << endl;
+    cout << "|                                     |" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << ">>> ";
+    cin.getline(contraseniaIngresada, 20);
 
-    for(int i = 0; i<10 ; i++){
-        if(j[i].estado != EOF){
-            if(strcmp(j[i].codigo, codigo) == 0){
+    for(int i = 0; i<20 ; i++){
+        if(u[i].estado != EOF){
+            if(strcmp(u->contrasenia, contraseniaIngresada) == 0){
                 return true;
             }
         }
     }
+
     return false;
 }
+
+void iniciarSesion(Juego* j, Ventas* v, Usuario* u){
+
+    do{
+        char codigo[5] = "";
+        system("cls");
+        cout << "---------------------------------------" << endl;
+        cout << "|        Bienvenido a Gamesale        |" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "|                                     |" << endl;
+        cout << "| Por favor, digite el código del     |" << endl;
+        cout << "| usuario:                            |" << endl;
+        cout << "|                                     |" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << ">>> ";
+        cin.getline(codigo, 5);
+
+        Usuario *usuarioIngresado = buscarUsuario(u, codigo);
+
+        if ((usuarioIngresado != NULL) && (usuarioIngresado->estado!=3)) {
+            //Si existe el usuario, procedemos a verificar la contraseña
+
+            do{
+                if(inicioSesion(usuarioIngresado)){
+                mostrarMenuPrincipal(j,v,u);
+            }else{
+                cout << ANSI_COLOR_ROJO <<"Contraseña Incorrecta.  " << ANSI_COLOR_AZUL << "Presiona ENTER para intentar de nuevo..." << ANSI_COLOR_RESET<<endl;
+                system("pause");
+            }
+            }while(true);
+            
+        } else {
+            //Si no existe, se le preguntará nuevamente (Solo el usuario existente, puede crear nuevos usuarios)
+            cout << ANSI_COLOR_ROJO <<"Usuario no existente.  " << ANSI_COLOR_AZUL << "Presiona ENTER para intentar de nuevo..." << ANSI_COLOR_RESET<<endl;
+            system("pause");
+        }
+    }while(true);
+}
+
+
 void menuVentas(Ventas* v){
     int opcionVenta = 0;
 

@@ -4,6 +4,8 @@
 #include <windows.h>
 using namespace std;
 
+
+
 void agregarUsuarios(Usuario* u, int i)
 {
     cout << "Ingrese nuevamente el código del usuario: " << endl;
