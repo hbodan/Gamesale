@@ -40,7 +40,7 @@ void guardarJuegos(Juego* j)
 
         if (archi == NULL)
         {
-            perror("Error al abrir el archivo juegos.dat para escritura.");
+            perror("Error al intentar abrir el archivo juegos.dat para escritura.");
             return;
         }
 
