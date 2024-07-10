@@ -102,6 +102,11 @@
     "ranges": "cpp",
     "stdexcept": "cpp",
     "streambuf": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "chrono": "cpp",
+    "thread": "cpp",
+    "ctime": "cpp",
+    "ratio": "cpp",
+    "stop_token": "cpp"
   }
 }

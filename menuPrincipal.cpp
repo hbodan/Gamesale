@@ -3,11 +3,14 @@
 #include <cstring>
 #include <windows.h>
 #include <conio.h>
+#include <thread>
+#include <chrono>
 using namespace std;
 
 #define ANSI_COLOR_ROJO     "\x1b[38;5;1m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 #define ANSI_COLOR_AZUL     "\x1b[38;5;4m"
+#define ANSI_COLOR_VERDE     "\x1b[38;5;2m"
 
 void registrarUsuario(Usuario* u);
 void eliminarUsuario(Usuario* u);
@@ -40,13 +43,10 @@ bool inicioSesion(Usuario* u){
     cout << ">>> ";
     cin.getline(contraseniaIngresada, 20);
 
-    for(int i = 0; i<20 ; i++){
-        if(u[i].estado != EOF){
-            if(strcmp(u->contrasenia, contraseniaIngresada) == 0){
-                return true;
-            }
-        }
+    if(strcmp(u->contrasenia, contraseniaIngresada) == 0){
+        return true;
     }
+
 
     return false;
 }
@@ -72,14 +72,23 @@ void iniciarSesion(Juego* j, Ventas* v, Usuario* u){
 
         if ((usuarioIngresado != NULL) && (usuarioIngresado->estado!=3)) {
             //Si existe el usuario, procedemos a verificar la contraseña
-
             do{
                 if(inicioSesion(usuarioIngresado)){
-                mostrarMenuPrincipal(j,v,u);
-            }else{
-                cout << ANSI_COLOR_ROJO <<"Contraseña Incorrecta.  " << ANSI_COLOR_AZUL << "Presiona ENTER para intentar de nuevo..." << ANSI_COLOR_RESET<<endl;
-                system("pause");
-            }
+                    cout <<ANSI_COLOR_VERDE << "Credenciales Válidas! " << ANSI_COLOR_AZUL << "Entrando al sistema";
+                    cout.flush();
+
+                    for (int i = 0; i < 5; ++i) {
+                        this_thread::sleep_for(chrono::milliseconds(300));
+                        cout<<ANSI_COLOR_AZUL << ".";
+                        cout.flush();
+                    }
+                    cout <<ANSI_COLOR_VERDE << " Listo!" << ANSI_COLOR_RESET<<endl;
+                    this_thread::sleep_for(chrono::milliseconds(500));
+                    mostrarMenuPrincipal(j,v,u);
+                }else{
+                    cout << ANSI_COLOR_ROJO <<"Contraseña Incorrecta.  " << ANSI_COLOR_AZUL << "Presiona ENTER para intentar de nuevo..." << ANSI_COLOR_RESET<<endl;
+                    system("pause");
+                }
             }while(true);
             
         } else {
@@ -95,13 +104,17 @@ void menuVentas(Ventas* v){
     int opcionVenta = 0;
 
     do{
-        cout<<"**********************************************"<<endl;
-        cout<<"Apartado de Ventas"<<endl;
-        cout<<"**********************************************"<<endl;
-        cout<<"1. Agregar Venta"<<endl;
-        cout<<"2. Mostrar todass las ventas"<<endl;
-        cout<<"3. Guardar cambios realizados en ventas"<<endl;
-        cout<<"0. Regresar..."<<endl;
+        system("cls");
+        cout << "----------------------------------------------" << endl;
+        cout << "|              Apartado de Ventas            |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << "|                                            |" << endl;
+        cout << "|  1. Agregar Venta                          |" << endl;
+        cout << "|  2. Mostrar todas las ventas               |" << endl;
+        cout << "|  3. Guardar cambios realizados en ventas   |" << endl;
+        cout << "|  0. Regresar...                            |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << ">>> ";
         cin>>opcionVenta;
 
         switch (opcionVenta)
@@ -116,6 +129,7 @@ void menuVentas(Ventas* v){
             guardarVentas(v);
             break;
         default:
+        cout<< ANSI_COLOR_VERDE<< "Ciao ciao"<< ANSI_COLOR_RESET<<endl;
             break;
         }
     }while(opcionVenta !=0);
@@ -124,15 +138,19 @@ void menuJuegos(Juego* j){
     int opcionJuego = 0;
 
     do{
-        cout<<"**********************************************"<<endl;
-        cout<<"Apartado de juegos"<<endl;
-        cout<<"**********************************************"<<endl;
-        cout<<"1. Agregar Juego"<<endl;
-        cout<<"2. Editar juego"<<endl;
-        cout<<"3. Eliminar juego"<<endl;
-        cout<<"4. Mostrar todos los juegos"<<endl;
-        cout<<"5. Guardar cambios realizados en juegos"<<endl;
-        cout<<"0. Regresar..."<<endl;
+        system("cls");
+        cout << "----------------------------------------------" << endl;
+        cout << "|             Apartado de juegos             |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << "|                                            |" << endl;
+        cout << "|  1. Agregar Juego                          |" << endl;
+        cout << "|  2. Editar juego                           |" << endl;
+        cout << "|  3. Eliminar juego                         |" << endl;
+        cout << "|  4. Mostrar todos los juegos               |" << endl;
+        cout << "|  5. Guardar cambios realizados en juegos   |" << endl;
+        cout << "|  0. Regresar...                            |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << ">>> ";
         cin>>opcionJuego;
 
         switch (opcionJuego)
@@ -161,16 +179,21 @@ void menuUsuarios(Usuario* u){
     int opcionUsuario = 0;
 
     do{
-        cout<<"**********************************************"<<endl;
-        cout<<"Apartado Usuario"<<endl;
-        cout<<"**********************************************"<<endl;
-        cout<<"1. Agregar Usuario"<<endl;
-        cout<<"2. Editar Usuario"<<endl;
-        cout<<"3. Eliminar Usuario"<<endl;
-        cout<<"4. Mostrar todos los usuarios"<<endl;
-        cout<<"5. Guardar cambios realizados en Usuario"<<endl;
-        cout<<"0. Regresar..."<<endl;
+        system("cls");
+        cout << "----------------------------------------------" << endl;
+        cout << "|              Apartado Usuario              |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << "|                                            |" << endl;
+        cout << "|  1. Agregar Usuario                        |" << endl;
+        cout << "|  2. Editar Usuario                         |" << endl;
+        cout << "|  3. Eliminar Usuario                       |" << endl;
+        cout << "|  4. Mostrar todos los usuarios             |" << endl;
+        cout << "|  5. Guardar cambios realizados en Usuario  |" << endl;
+        cout << "|  0. Regresar...                            |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << ">>> ";
         cin>>opcionUsuario;
+        system("cls");
 
         switch (opcionUsuario)
         {
@@ -199,11 +222,17 @@ void menuUsuarios(Usuario* u){
 void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
     int opcionPrincipal = 0;
     do{
-        cout<<"Bienvenidos a GameSale"<<endl;
-        cout<<"1. Usuarios"<<endl;
-        cout<<"2. Juegos"<<endl;
-        cout<<"3. Ventas"<<endl;
-        cout<<"0. Salir"<<endl;
+        system("cls");
+        cout << "----------------------------------------------" << endl;
+        cout << "|               Menu Principal               |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << "|                                            |" << endl;
+        cout << "|  1. Usuarios                               |" << endl;
+        cout << "|  2. Juegos                                 |" << endl;
+        cout << "|  3. Ventas                                 |" << endl;
+        cout << "|  0. Salir                                  |" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << ">>> ";
         cin>>opcionPrincipal;
 
         switch (opcionPrincipal)
@@ -217,8 +246,11 @@ void mostrarMenuPrincipal(Juego* j, Ventas* v, Usuario* u){
         case 3:
             menuVentas(v);
             break;
+        case 0:
+            cout<<ANSI_COLOR_AZUL<<"Cia ciao!!!"<<ANSI_COLOR_RESET<<endl;
+            exit(0);
+            break;
         default:
-            cout<<"Cia ciao"<<endl;
             break;
         }
     }while(opcionPrincipal!=0);
