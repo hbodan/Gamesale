@@ -75,7 +75,7 @@ void agregarVentas(Ventas* v, int i, const char *codigo, Usuario* usuario, Juego
 
         if ((juego != NULL) && (juego->stock > 0) && (juego->estado != 3)) {
             strcpy(v[i].codigosJuegos[contadorJuegos], codigoJuego);
-            cout << ANSI_COLOR_VERDE <<"Juego agregado exitosamente. "<< ANSI_COLOR_AZUL<<"Por favor agrega correctamente..."<< ANSI_COLOR_RESET <<endl;
+            cout << ANSI_COLOR_VERDE <<"Juego agregado exitosamente. "<< ANSI_COLOR_AZUL<<"..."<< ANSI_COLOR_RESET <<endl;
             juego->stock--;
             contadorJuegos++;
         } else {
@@ -171,7 +171,7 @@ void mostrarVentas(Ventas* v, Juego* j) {
             contador++;
         }
     }
-    cout << "\033[32m" << contador << " Registros mostrados exitosamente. \033[34mPresiona ENTER para continuar...\033[0m" << endl;
+    cout << ANSI_COLOR_VERDE << contador <<" Registros mostrados exitosamente. " << ANSI_COLOR_AZUL <<"Presiona ENTER para continuar..."<<ANSI_COLOR_RESET<<endl;
     system("pause");
     system("cls");
 }
