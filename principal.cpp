@@ -3,6 +3,8 @@
 #include <windows.h>
 using namespace std;
 
+// VERIFICADO POR QA 
+
 #define ANSI_COLOR_ROJO     "\x1b[38;5;1m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 #define ANSI_COLOR_AZUL     "\x1b[38;5;4m"
